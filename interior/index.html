@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>인테리어 항목 — 시공 요청서</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --surface-soft: #f1f0eb;
+      --text: #18181b;
+      --muted: #52525b;
+      --subtle: #71717a;
+      --border: #e4e4e7;
+      --accent: #0f766e;
+      --accent-soft: #ccfbf1;
+      --link: #0369a1;
+      --link-bg: #e0f2fe;
+      --exclude: #991b1b;
+      --exclude-bg: #fee2e2;
+      --separate: #92400e;
+      --separate-bg: #fef3c7;
+      --size: #4338ca;
+      --size-bg: #e0e7ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 28px 16px 64px;
+    }
+
+    /* Header */
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .print-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .print-btn:hover { background: var(--surface-soft); color: var(--text); }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .notice {
+      background: var(--surface-soft);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .stat {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--subtle);
+    }
+
+    /* Sticky toolbar */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(247, 246, 242, 0.92);
+      backdrop-filter: blur(10px);
+      padding: 10px 0 12px;
+      margin-bottom: 12px;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .search-box:focus { border-color: var(--accent); }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .tab.active {
+      background: var(--text);
+      border-color: var(--text);
+      color: #ffffff;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 0 2px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+    .badge-work { background: var(--accent-soft); color: var(--accent); }
+    .badge-exclude { background: var(--exclude-bg); color: var(--exclude); }
+    .badge-separate { background: var(--separate-bg); color: var(--separate); }
+    .badge-size { background: var(--size-bg); color: var(--size); }
+
+    /* Cards / Rows */
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .item-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      word-break: keep-all;
+    }
+
+    .item-body {
+      font-size: 14.5px;
+      color: #27272a;
+      word-break: keep-all;
+    }
+
+    .item-body ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .item-body li {
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .item-body li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .empty-note {
+      color: var(--subtle);
+      font-size: 13.5px;
+      font-style: italic;
+    }
+
+    .spec {
+      display: inline-block;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 7px;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #18181b;
+    }
+
+    a.ext {
+      color: var(--link);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(3, 105, 161, 0.3);
+    }
+    a.ext:hover {
+      border-bottom-color: var(--link);
+    }
+
+    a.guide-chip {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--link);
+      background: var(--link-bg);
+      padding: 1px 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin-left: 4px;
+      vertical-align: baseline;
+    }
+    a.guide-chip:hover { filter: brightness(0.96); }
+
+    /* Compact grid for exclude & size */
+    .compact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .compact-grid .item {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 40px 16px;
+      color: var(--subtle);
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+    }
+
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--subtle);
+    }
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 15px 16px;
+      }
+      .item-name {
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--surface-soft);
+      }
+      .compact-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .toolbar, .print-btn, footer { display: none !important; }
+      .container { max-width: 100%; padding: 0; }
+      .hero, .item { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <div class="hero-top">
+        <span class="eyebrow">공유용 · 인테리어 요청</span>
+        <button class="print-btn" onclick="window.print()">인쇄 / PDF 저장</button>
+      </div>
+      <h1>인테리어 항목</h1>
+      <div class="notice">
+        선호되는 작업들을 적어두었고, 디자인 설계에 따라 변경 가능합니다.
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">21</div>
+          <div class="stat-label">시공 항목</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">4</div>
+          <div class="stat-label">제외 항목</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">8</div>
+          <div class="stat-label">별도 준비</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">6</div>
+          <div class="stat-label">가구·가전 사이즈</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <input id="search" class="search-box" type="search" placeholder="항목, 모델명, 키워드 검색 (예: 주방, 인덕션, 타일, 실링팬...)" autocomplete="off" />
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-filter="all">전체 (39)</button>
+        <button class="tab" data-filter="work">시공 항목 (21)</button>
+        <button class="tab" data-filter="exclude">제외 (4)</button>
+        <button class="tab" data-filter="separate">별도 준비 (8)</button>
+        <button class="tab" data-filter="size">기타 가구·가전 사이즈 (6)</button>
+      </div>
+    </div>
+
+    <!-- 1. 시공 항목 -->
+    <section class="section" data-category="work">
+      <div class="section-head">
+        <span class="badge badge-work">시공</span>
+        <h2 class="section-title">선호 시공 항목</h2>
+      </div>
+      <div class="list">
+        <article class="item" data-category="work">
+          <div class="item-name">철거</div>
+          <div class="item-body">
+            <ul>
+              <li>주방가구(싱크대 &amp; 냉장고장), 문 &amp; 문틀, 걸레받이 &amp; 몰딩, 장판 철거 및 샌딩</li>
+              <li>현관 신발장, 팬트리</li>
+              <li>외벽 단열재 철거</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">외벽 단열재 철거 &amp; 단열 보강</div>
+          <div class="item-body">
+            <ul>
+              <li>외벽 라인 집임. 외벽 부분 단열 필요한지 체크 (특히 주방 옆 작은방 확장 부분)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">화장실 철거 &amp; 방수</div>
+          <div class="item-body">
+            <ul>
+              <li>올철거 3차 방수 (액방 1회, 아덱스 도막 2회 / 안방은 덧방이 나을지 체크)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">배관 교체</div>
+          <div class="item-body">
+            <ul>
+              <li>냉온수 배관(PPC) 교체</li>
+              <li>싱크대 배수 배관(주철관) 교체: 공유 하수 배관 쪽까지 교체 (벽까지만 할 시 교체 부위 누수 위험)</li>
+              <li>제외: 난방 배관 (기존 배관: 엑셀)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">주방</div>
+          <div class="item-body">
+            <ul>
+              <li>싱크볼, 인덕션(&amp; 후드) 자리 이동 및 수도 하부 내림 (인덕션 매립 플랫 시공 &amp; 가스 마감 공사)</li>
+              <li>ㄱ자 하부장, 걸레받이 <span class="spec">15cm</span> (걸레받이에 LG 로니 로봇청소기 시공 예정), 식세기 시공 (주변 방수 테이핑, 하부장 단 맞춤)</li>
+              <li>키큰장: 상단 레인지 다이 × 2 &amp; 하단 밥솥 다이 (주변 방수 테이핑), 서랍 두 번 안 여는 방식 (서랍 레일: 누오미 or 블룸)</li>
+              <li>인조대리석 상판 (하이막스 오로라 스타일, 벽과 몰딩 없이 직각 마감 / 오로라나 캔디화이트)</li>
+              <li>1자 상부장 (창문 벽면만. 창문 상단까지 최대한 붙여서 창문 윗프레임까지 덮는 크기로)</li>
+              <li>벽타일 <span class="spec">800각</span></li>
+              <li>사각 싱크볼 스타일 (엠보 사각볼, 언더 방식 시공), 폭포 수전 (무광 니켈, 거위목 스타일)</li>
+              <li>냉장고장 (1도어 × 2 키친핏) &amp; 카페장 (중간 코너 오픈 선반): 앞에 식탁을 놓을 예정</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">거실 화장실</div>
+          <div class="item-body">
+            <ul>
+              <li>젠다이 (욕조 끝까지 마감, 변기 물탱크 뚜껑 잘 빠지게 간격 설정)</li>
+              <li>아크릴 욕조 (옆면 타일 마감, 파티션 없음)</li>
+              <li>세면대, 변기 (원피스 치마형 림리스), 청소건, 무광 수전 (세면대 &amp; 샤워기, 잘 안 벗겨지는 SUS304 소재), 일반 유가, 무광 수건걸이</li>
+              <li>수납장 (슬라이드장)</li>
+              <li>힘펠 휴젠트 설치 (세면대 위, 조명 스위치와 분리)</li>
+              <li>타일 <span class="spec">600각</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">안방 화장실</div>
+          <div class="item-body">
+            <ul>
+              <li>세면 샤워 겸용 수전 (화장실 문/틀 소재 방습 고려, 샤워기 줄 덜 거슬리게 체크)</li>
+              <li>변기 &amp; 상부 수납장</li>
+              <li>하츠 티오람 설치 (세면대 위, 조명 스위치와 분리)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">방문</div>
+          <div class="item-body">
+            <ul>
+              <li><span class="spec">9mm</span> 문선, 여닫이 5개</li>
+              <li>주방 발코니 터닝도어</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">안방</div>
+          <div class="item-body">
+            <ul>
+              <li>침대 파티션 (가벽, 시스템 행거 넣을 예정)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">중문, 현관</div>
+          <div class="item-body">
+            <ul>
+              <li>여닫이 (싱글 스윙형), 불투명 유리 (사틴, 플로트 등)</li>
+              <li>신발장 하단 띄움 및 전신 은경 거울</li>
+              <li>바닥 대형 타일 (라빠또), 디딤석</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">TV 반매립</div>
+          <div class="item-body">
+            <ul>
+              <li>TV, 셋톱박스, 공유기</li>
+              <li>HDMI 2.1 선 매립관 (게임기장 연결 용도, 추후 선 교체 가능하도록 작업)</li>
+              <li>
+                <a class="ext" href="https://blog.naver.com/tvcraft/222799304409" target="_blank" rel="noopener noreferrer">슬립 반매립</a>
+                (<span class="spec">1400×800</span>, 높이 <span class="spec">700</span>) &amp; 콘센트 상단 쪽으로 가능한지 체크
+                (<a class="ext" href="https://blog.naver.com/tvcraft/223707850582" target="_blank" rel="noopener noreferrer">LG 하단 돌출 페이퍼형 TV</a> :
+                <a class="ext" href="https://www.lge.co.kr/product/tvs/oled65b2kna-wall?modelId=MD09148867&pdpType=PURCHASE" target="_blank" rel="noopener noreferrer">OLED65B2KNA</a>)
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">실링팬 설치</div>
+          <div class="item-body">
+            <ul>
+              <li>4개: 거실 &amp; 방 3개</li>
+              <li>천정 보강 &amp; 설치 (기기 별도 구매)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">조명</div>
+          <div class="item-body">
+            <ul>
+              <li>기본 2인치 주백색 다운라이트: 거실 12개, 주방 5개, 안방 6개, 현관방 2개, 주방방 2개, 복도 4개, 거실욕실 2개, 안방욕실 2개</li>
+              <li>간접등: 거실 커튼박스 (추후 전동커튼 시공할 수 있게 넓게), 주방 상부장 간접등, 거실 화장실 수납장 하단 간접등</li>
+              <li>센서조명: 현관 2인치, 신발장 하단 &amp; 오픈선반 간접조명</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">전기</div>
+          <div class="item-body">
+            <ul>
+              <li>단독배선: 인덕션, 냉온정수기 (언더싱크 빌트인), 식세기, 에어컨 등 체크</li>
+              <li>분전함 교체</li>
+              <li>스위치 N개 (거실 스위치는 선정 필요), 콘센트 N개</li>
+              <li>현관 일괄소등 스위치, 센서등 상시 스위치</li>
+              <li>인터넷 배선 (유플러스)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">바닥</div>
+          <div class="item-body">
+            <ul>
+              <li>강마루 (광폭 or 타일형, 마뷸러스 젠 스타일), 샌딩 작업</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">도배</div>
+          <div class="item-body">
+            <ul>
+              <li>LX 베스트 급 벽지. 거실, 방, 천정 일체. 퍼티, 띄움 시공 포함</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">걸레받이, 몰딩</div>
+          <div class="item-body">
+            <ul>
+              <li>얇은 무광 걸레받이 &amp; 몰딩</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">팬트리</div>
+          <div class="item-body">
+            <ul>
+              <li>도어 교체</li>
+              <li>내부 청소기함 (+ 콘센트) &amp; 선반</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">필름 작업</div>
+          <div class="item-body">
+            <ul>
+              <li>현관문, 현관벽</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">발코니</div>
+          <div class="item-body">
+            <ul>
+              <li>앞 발코니 벽면 키큰장 (혹은 내부 스피드랙 &amp; 도어. 무거운 캠핑용품 수납 예정)</li>
+              <li>탄성코트 (앞 발코니 천정 일부 페인트 박리됨 → 기존 페인트 제거)</li>
+              <li>타일 덧방</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="work">
+          <div class="item-name">인터폰 &amp; 도어락 교체</div>
+          <div class="item-body">
+            <ul>
+              <li>기기 교체 (현재 검은색 → 벽 색깔에 어울리는 밝은 색 기기로 교체)</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 2. 제외 -->
+    <section class="section" data-category="exclude">
+      <div class="section-head">
+        <span class="badge badge-exclude">제외</span>
+        <h2 class="section-title">시공 제외 항목</h2>
+      </div>
+      <div class="compact-grid">
+        <article class="item" data-category="exclude">
+          <div class="item-name">난방 배관</div>
+          <div class="item-body">기존 배관: 엑셀</div>
+        </article>
+        <article class="item" data-category="exclude">
+          <div class="item-name">확장</div>
+          <div class="item-body"><span class="empty-note">제외</span></div>
+        </article>
+        <article class="item" data-category="exclude">
+          <div class="item-name">샷시</div>
+          <div class="item-body"><span class="empty-note">제외</span></div>
+        </article>
+        <article class="item" data-category="exclude">
+          <div class="item-name">시스템 에어컨</div>
+          <div class="item-body"><span class="empty-note">제외</span></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3. 별도 -->
+    <section class="section" data-category="separate">
+      <div class="section-head">
+        <span class="badge badge-separate">별도</span>
+        <h2 class="section-title">별도 구매 · 준비 품목</h2>
+      </div>
+      <div class="list">
+        <article class="item" data-category="separate">
+          <div class="item-name">식세기</div>
+          <div class="item-body">
+            <ul>
+              <li>
+                LG 디오스
+                <a class="ext" href="https://www.lge.co.kr/product/dishwashers/due5bgl1e?modelId=MD10492841&pdpType=PURCHASE&sKwd=DUE5BGL1E&sTab=unit_product_list&sRank=1" target="_blank" rel="noopener noreferrer">DUE5BGL1E</a>
+                <a class="guide-chip" href="https://www.lge.co.kr/story/user-guide/dishwashers-install-guide#built-in-150mm" target="_blank" rel="noopener noreferrer">설치가이드 ↗</a>
+              </li>
+              <li>치수: <span class="spec">폭 598 · 높이 815 · 깊이 567 · 걸레받이 150</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="separate">
+          <div class="item-name">냉장고</div>
+          <div class="item-body">
+            <ul>
+              <li>
+                LG 컨버터블 × 2개 (
+                <a class="ext" href="https://www.lge.co.kr/product/convertible-refrigerators/x326gb3?modelId=MD10876841&pdpType=PURCHASE&sKwd=X326GB3&sTab=unit_product_list&sRank=1" target="_blank" rel="noopener noreferrer">X326GB3</a>
+                +
+                <a class="ext" href="https://www.lge.co.kr/product/convertible-refrigerators/y326gb3?modelId=MD10876852&pdpType=PURCHASE&sKwd=Y326GB3&sTab=unit_product_list&sRank=1" target="_blank" rel="noopener noreferrer">Y326GB3</a>
+                )
+                <a class="guide-chip" href="https://www.lge.co.kr/story/setup-guide/refrigerator-installation-guide?model1=x326&model2=x326" target="_blank" rel="noopener noreferrer">설치가이드 ↗</a>
+              </li>
+              <li>2대 페어 폭: <span class="spec">1,212mm</span> (598 + 598 + 좌우 각 4mm + 사이 8mm)</li>
+              <li>높이: <span class="spec">1,875mm 이상</span> (1,860 + 상단 15mm)</li>
+              <li>깊이: <span class="spec">700mm</span> (제품 670, 후면 여유 공식 안내 25mm)</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="separate">
+          <div class="item-name">워시타워</div>
+          <div class="item-body">
+            <ul>
+              <li>
+                LG 워시타워
+                <a class="ext" href="https://www.lge.co.kr/product/all-in-one-laundry/wl21wdu?modelId=MD09942859&pdpType=PURCHASE&sKwd=WL21WDU&sTab=unit_product_list&sRank=1&pdpVer=B" target="_blank" rel="noopener noreferrer">WL21WDU</a>
+                <a class="guide-chip" href="https://www.lge.co.kr/story/setup-guide/washer-installation-guide#result-01-01-01-01" target="_blank" rel="noopener noreferrer">설치가이드 ↗</a>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="separate">
+          <div class="item-name">인덕션</div>
+          <div class="item-body">
+            <ul>
+              <li>
+                나비엔매직
+                <a class="ext" href="https://www.navienhouse.com/products/G2000029988" target="_blank" rel="noopener noreferrer">ERI-5033AF</a>
+                <a class="guide-chip" href="https://www.navienhouse.com/products/G2000029988" target="_blank" rel="noopener noreferrer">공식 ↗</a>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="separate">
+          <div class="item-name">휴젠트</div>
+          <div class="item-body">
+            <ul>
+              <li>
+                거실 화장실: 힘펠 휴젠트 노바F
+                <a class="ext" href="https://www.himpelmall.com/mall/product/product_view.php?ps_ctid=16010000&ps_goid=1169" target="_blank" rel="noopener noreferrer">FHD2-C150P_NOVA_T0004</a>
+              </li>
+              <li>
+                안방 화장실: 하츠 티오람 미니
+                <a class="ext" href="https://haatzmall.com/goods/goods_view.php?goodsNo=2037" target="_blank" rel="noopener noreferrer">HMF-J300</a>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="separate">
+          <div class="item-name">실링팬</div>
+          <div class="item-body">
+            <ul>
+              <li>
+                거실:
+                <a class="ext" href="https://lucciair.kr/default/product/board_b.php?com_board_basic=read_form&com_board_idx=23&&com_board_search_code=&com_board_search_value1=&com_board_search_value2=&com_board_page=&&com_board_id=8&&com_board_category_code=c1&com_board_category_code=c1&com_board_category_code=c1&com_board_category_code=c1&com_board_category_code=c1&com_board_id=8" target="_blank" rel="noopener noreferrer">루씨에어 코타라 커넥트 CTC 화이트 (54인치)</a>
+              </li>
+              <li>
+                방:
+                <a class="ext" href="https://ko.aliexpress.com/item/1005011903187351.html?pdp_npi=4%40dis%21KRW%21%E2%82%A9+57%2C925%21%E2%82%A9+45%2C781%21%21%21279.99%21221.29%21%402101611117949335004467327e0cf0%2112000056961009970%21sh%21KR%210%21X&spm=a2g0o.store_pc_home.allitems_choice_2004836020561.1005011903187351&gatewayAdapt=glo2kor" target="_blank" rel="noopener noreferrer">소브 A1 화이트 (44인치)</a> × 3개
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="separate">
+          <div class="item-name">시스템 행거</div>
+          <div class="item-body">
+            <ul>
+              <li>안방 시스템 행거 &amp; 화장대</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="item" data-category="separate">
+          <div class="item-name">HDMI 2.1 케이블</div>
+          <div class="item-body">
+            <ul>
+              <li>
+                반매립 TV–게임기 연결용 케이블 2m
+                (<a class="ext" href="https://www.coupang.com/vp/products/7605627939?vendorItemId=87224360506&sourceType=MyCoupang_my_orders_list_product_title" target="_blank" rel="noopener noreferrer">Soopii ULTRA HIGH SPEED HDMI 2.1 케이블 HH80</a>)
+              </li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. 기타 가구 & 가전 사이즈 -->
+    <section class="section" data-category="size">
+      <div class="section-head">
+        <span class="badge badge-size">사이즈</span>
+        <h2 class="section-title">기타 가구 &amp; 가전 사이즈</h2>
+      </div>
+      <div class="compact-grid">
+        <article class="item" data-category="size">
+          <div class="item-name">게임기 (닌텐도 2)</div>
+          <div class="item-body">
+            <span class="spec">가로 272mm × 세로 116mm × 두께 13.9mm</span>
+          </div>
+        </article>
+
+        <article class="item" data-category="size">
+          <div class="item-name">TV</div>
+          <div class="item-body">
+            LG <a class="ext" href="https://www.lge.co.kr/product/tvs/oled65b2kna-wall?modelId=MD09148867&pdpType=PURCHASE" target="_blank" rel="noopener noreferrer">OLED65B2KNA</a><br />
+            <span class="spec">1,449 × 832 × 46.9 mm</span> (벽걸이 제외)<br />
+            전원 돌출부: <span class="spec">40mm × 5mm</span>
+          </div>
+        </article>
+
+        <article class="item" data-category="size">
+          <div class="item-name">정수기</div>
+          <div class="item-body">
+            코웨이 냉온얼음 정수기
+            <a class="ext" href="https://www.coway.com/product/detail?prdno=1148" target="_blank" rel="noopener noreferrer">CHPI-7400N</a><br />
+            <span class="spec">240 × 465 × 473 mm</span>
+          </div>
+        </article>
+
+        <article class="item" data-category="size">
+          <div class="item-name">쇼파</div>
+          <div class="item-body"><span class="empty-note">추후 확인 / 기입 예정</span></div>
+        </article>
+
+        <article class="item" data-category="size">
+          <div class="item-name">식탁 테이블</div>
+          <div class="item-body"><span class="empty-note">추후 확인 / 기입 예정</span></div>
+        </article>
+
+        <article class="item" data-category="size">
+          <div class="item-name">커피머신</div>
+          <div class="item-body"><span class="empty-note">추후 확인 / 기입 예정</span></div>
+        </article>
+      </div>
+    </section>
+
+    <div id="no-results" class="no-results">검색어에 일치하는 항목이 없습니다.</div>
+
+    <footer>
+      <a href="/">← kjylog.github.io 전체 페이지 목록</a>
+    </footer>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('search');
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const sections = Array.from(document.querySelectorAll('.section'));
+    const items = Array.from(document.querySelectorAll('.item'));
+    const noResults = document.getElementById('no-results');
+
+    let currentFilter = 'all';
+
+    function applyFilter() {
+      const q = searchInput.value.trim().toLowerCase();
+      let visibleTotal = 0;
+
+      sections.forEach((sec) => {
+        const cat = sec.dataset.category;
+        const catMatch = currentFilter === 'all' || currentFilter === cat;
+        if (!catMatch) {
+          sec.style.display = 'none';
+          return;
+        }
+
+        const secItems = Array.from(sec.querySelectorAll('.item'));
+        let secVisible = 0;
+        secItems.forEach((item) => {
+          const text = item.textContent.toLowerCase();
+          const ok = !q || text.includes(q);
+          item.style.display = ok ? '' : 'none';
+          if (ok) {
+            secVisible += 1;
+            visibleTotal += 1;
+          }
+        });
+
+        sec.style.display = secVisible > 0 ? '' : 'none';
+      });
+
+      noResults.style.display = visibleTotal === 0 ? 'block' : 'none';
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentFilter = tab.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    searchInput.addEventListener('input', applyFilter);
+  </script>
+</body>
+</html>
